@@ -1,9 +1,10 @@
-# pyright-action
+# basedpyright-action
 
-[![ci](https://github.com/jakebailey/pyright-action/actions/workflows/ci.yml/badge.svg)](https://github.com/jakebailey/pyright-action/actions/workflows/ci.yml)
-[![codecov](https://codecov.io/gh/jakebailey/pyright-action/branch/main/graph/badge.svg?token=5OMEFS2LQZ)](https://codecov.io/gh/jakebailey/pyright-action)
+[![ci](https://github.com/detachhead/basedpyright-action/actions/workflows/ci.yml/badge.svg)](https://github.com/detachhead/basedpyright-action/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/detachhead/basedpyright-action/branch/main/graph/badge.svg?token=5OMEFS2LQZ)](https://codecov.io/gh/detachhead/basedpyright-action)
 
-GitHub action for [pyright](https://github.com/microsoft/pyright). Featuring:
+GitHub action for [basedpyright](https://github.com/detachhead/basedpyright).
+Featuring:
 
 - PR/commit annotations for errors/warnings.
 - Super fast startup, via:
@@ -11,31 +12,38 @@ GitHub action for [pyright](https://github.com/microsoft/pyright). Featuring:
   - No dependency on `setup-node`.
 
 ```yml
-- uses: jakebailey/pyright-action@v2
+- uses: detachhead/basedpyright-action@v1
   with:
-    version: 1.1.311 # Optional (change me!)
+    version: 1.8.0 # Optional (change me!)
 ```
+
+## differences from pyright-action
+
+the `pylance-version` option has been removed as basedpyright does not have the
+same issue as pyright/pylance where vscode uses a different version that's
+impossible to properly sync with your CI. instead, the basedpyright vscode
+extension
+[uses the version installed in your project by default](https://detachhead.github.io/basedpyright/#/?id=ability-to-pin-the-version-used-by-vscode)
+and
+[re-implements pylance-exclusive features](https://detachhead.github.io/basedpyright/#/?id=re-implementing-pylance-exclusive-features).
 
 ## Options
 
 ```yml
 inputs:
-  # Options for pyright-action
+  # Options for basedpyright-action
   version:
-    description: 'Version of pyright to run. If neither version nor pylance-version are specified, the latest version will be used.'
-    required: false
-  pylance-version:
-    description: 'Version of pylance whose pyright version should be run. Can be latest-release, latest-prerelease, or a specific pylance version. Ignored if version option is specified.'
+    description: 'Version of basedpyright to run. If not specified, the latest version will be used.'
     required: false
   working-directory:
-    description: 'Directory to run pyright in. If not specified, the repo root will be used.'
+    description: 'Directory to run basedpyright in. If not specified, the repo root will be used.'
     required: false
   annotate:
     description: 'A comma separated list of check annotations to emit. May be "none"/"false", "errors", "warnings", or "all"/"true" (shorthand for "errors, warnings").'
     required: false
     default: 'all'
 
-  # Shorthand for pyright flags
+  # Shorthand for basedpyright flags
   create-stub:
     description: 'Create type stub file(s) for import. Note: using this option disables commenting.'
     required: false
@@ -105,8 +113,8 @@ inputs:
 ## Use with a virtualenv
 
 The easiest way to use a virtualenv with this action is to "activate" the
-environment by adding its bin to `$PATH`, then allowing `pyright` to find it
-there.
+environment by adding its bin to `$PATH`, then allowing `basedpyright` to find
+it there.
 
 ```yml
 - uses: actions/checkout@v3
@@ -121,7 +129,7 @@ there.
 
 - run: echo "$PWD/.venv/bin" >> $GITHUB_PATH
 
-- uses: jakebailey/pyright-action@v2
+- uses: detachhead/basedpyright-action@v2
 ```
 
 ## Use with poetry
@@ -140,25 +148,5 @@ poetry's python binary is on `$PATH`:
 - run: poetry install
 - run: echo "$(poetry env info --path)/bin" >> $GITHUB_PATH
 
-- uses: jakebailey/pyright-action@v2
-```
-
-## Keeping Pyright and Pylance in sync
-
-If you use Pylance as your language server, you'll likely want pyright-action to
-use the same version of `pyright` that Pylance does. The `pylance-version`
-option makes this easy.
-
-If you allow VS Code to auto-update Pylance, then set `pylance-version` to
-`latest-release` if you use Pylance's Release builds, or `latest-prerelease` if
-you use Pylance's Pre-Release builds. Alternatively, you can set it to a
-particular Pylance version number (ex. `2023.11.11`).
-
-Note that the `version` option takes precedence over `pylance-version`, so
-you'll want to set one or the other, not both.
-
-```yml
-- uses: jakebailey/pyright-action@v2
-  with:
-    pylance-version: latest-release
+- uses: detachhead/basedpyright-action@v2
 ```
