@@ -27,6 +27,18 @@ extension
 and
 [re-implements pylance-exclusive features](https://detachhead.github.io/basedpyright/#/?id=re-implementing-pylance-exclusive-features).
 
+## why use this?
+
+you may be wondering what the point of this action is when you can just do this:
+
+```yaml
+- run: basedpyright
+```
+
+the benefit of using this action is that it shows errors on the effected lines of code in your pull requests:
+
+![image](https://github.com/DetachHead/basedpyright-action/assets/57028336/a80dae2a-b85e-42b7-8e86-9ca1f6838e46)
+
 ## Options
 
 ```yml
