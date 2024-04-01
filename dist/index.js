@@ -10230,8 +10230,8 @@ function checkOverriddenFlags(version3, args) {
     while (cwd !== root) {
       const pyprojectPath = path2.posix.join(cwd, "pyproject.toml");
       if (fs.existsSync(pyprojectPath)) {
-        const pyproject = TOML.parse(fs.readFileSync(pyprojectPath, "utf8"));
-        parsed = pyproject["tool"]["pyright"];
+        const toolSection = TOML.parse(fs.readFileSync(pyprojectPath, "utf8"))["tool"];
+        parsed = toolSection["basedpyright"] ?? toolSection["pyright"];
         configPath = pyprojectPath;
         break;
       }
