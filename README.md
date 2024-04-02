@@ -141,7 +141,7 @@ it there.
 
 - run: echo "$PWD/.venv/bin" >> $GITHUB_PATH
 
-- uses: detachhead/basedpyright-action@v2
+- uses: detachhead/basedpyright-action@v1
 ```
 
 ## Use with poetry
@@ -160,5 +160,5 @@ poetry's python binary is on `$PATH`:
 - run: poetry install
 - run: echo "$(poetry env info --path)/bin" >> $GITHUB_PATH
 
-- uses: detachhead/basedpyright-action@v2
+- uses: detachhead/basedpyright-action@v1
 ```
