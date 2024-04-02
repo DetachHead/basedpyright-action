@@ -19,7 +19,7 @@ const mockedTc = vitest.mocked(tc);
 
 import { version as actionVersion } from "../package.json";
 import { getActionVersion, getArgs, getNodeInfo } from "./helpers";
-import type { NpmRegistryResponse, PylanceBuildMetadata } from "./schema";
+import type { NpmRegistryResponse } from "./schema";
 
 const fakeRoot = path.join(os.tmpdir(), "rootDir");
 
@@ -43,13 +43,6 @@ function getNpmResponse(version: string): NpmRegistryResponse {
         dist: {
             tarball: `https://registry.npmjs.org/pyright/-/pyright-${version}.tgz`,
         },
-    };
-}
-
-function getPylanceMetadata(pylanceVersion: string, pyrightVersion: string): PylanceBuildMetadata {
-    return {
-        pylanceVersion,
-        pyrightVersion,
     };
 }
 
@@ -125,29 +118,6 @@ describe("getArgs", () => {
                                     statusCode: 200,
                                 } as IncomingMessage,
                                 readBody: async () => JSON.stringify(getNpmResponse(version)),
-                            };
-                    }
-                }
-
-                const pylanceVersionPrefix =
-                    "https://raw.githubusercontent.com/microsoft/pylance-release/main/releases/";
-                if (url.startsWith(pylanceVersionPrefix)) {
-                    const pylanceVersion = url.slice(pylanceVersionPrefix.length, -5);
-
-                    switch (pylanceVersion) {
-                        case "9999.99.404":
-                            return {
-                                message: {
-                                    statusCode: 404,
-                                } as IncomingMessage,
-                                readBody: async () => JSON.stringify("version not found: 9999.99.404"),
-                            };
-                        default:
-                            return {
-                                message: {
-                                    statusCode: 200,
-                                } as IncomingMessage,
-                                readBody: async () => JSON.stringify(getPylanceMetadata(pylanceVersion, "9.9.999")),
                             };
                     }
                 }

@@ -7,7 +7,7 @@ import SemVer from "semver/classes/semver";
 import { parse } from "shell-quote";
 
 import { version as actionVersion } from "../package.json";
-import { type NpmRegistryResponse, parseNpmRegistryResponse, parsePylanceBuildMetadata } from "./schema";
+import { type NpmRegistryResponse, parseNpmRegistryResponse } from "./schema";
 
 export function getActionVersion() {
     return actionVersion;
@@ -212,7 +212,7 @@ function getBooleanInput(name: string, defaultValue: boolean): boolean {
     return input.toUpperCase() === "TRUE";
 }
 
-const pyrightToolName = "pyright";
+const pyrightToolName = "basedpyright";
 
 async function downloadPyright(info: NpmRegistryResponse): Promise<string> {
     // Note: this only works because the pyright package doesn't have any
@@ -231,7 +231,7 @@ async function downloadPyright(info: NpmRegistryResponse): Promise<string> {
 async function getPyrightInfo(): Promise<NpmRegistryResponse> {
     const version = await getPyrightVersion();
     const client = new httpClient.HttpClient();
-    const url = `https://registry.npmjs.org/pyright/${version}`;
+    const url = `https://registry.npmjs.org/${pyrightToolName}/${version}`;
     const resp = await client.get(url);
     const body = await resp.readBody();
     if (resp.message.statusCode !== httpClient.HttpCodes.OK) {
@@ -246,31 +246,5 @@ async function getPyrightVersion(): Promise<string> {
         return new SemVer(versionSpec).format();
     }
 
-    const pylanceVersion = core.getInput("pylance-version");
-    if (pylanceVersion) {
-        if (pylanceVersion !== "latest-release" && pylanceVersion !== "latest-prerelease") {
-            new SemVer(pylanceVersion); // validate version string
-        }
-
-        return await getPylancePyrightVersion(pylanceVersion);
-    }
-
     return "latest";
-}
-
-async function getPylancePyrightVersion(pylanceVersion: string): Promise<string> {
-    const client = new httpClient.HttpClient();
-    const url = `https://raw.githubusercontent.com/microsoft/pylance-release/main/releases/${pylanceVersion}.json`;
-    const resp = await client.get(url);
-    const body = await resp.readBody();
-    if (resp.message.statusCode !== httpClient.HttpCodes.OK) {
-        throw new Error(`Failed to download release metadata for Pylance ${pylanceVersion} from ${url} -- ${body}`);
-    }
-
-    const buildMetadata = parsePylanceBuildMetadata(JSON.parse(body));
-    const pyrightVersion = buildMetadata.pyrightVersion;
-
-    core.info(`Pylance ${pylanceVersion} uses pyright ${pyrightVersion}`);
-
-    return pyrightVersion;
 }

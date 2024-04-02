@@ -18,7 +18,7 @@ jobs:
       - uses: ./.github/actions/setup
 
       - run: pnpm build
-      - run: git diff --exit-code --name-only dist
+      - run: git diff --exit-code dist
 
   typecheck:
     name: Typecheck
